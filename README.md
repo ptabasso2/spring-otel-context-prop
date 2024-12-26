@@ -192,7 +192,7 @@ This shows how we can propagate across service boundaries or threads while maint
 4. **Start the OpenTelemetry Collector**:
    Replace `xxxxxxxx` with your Datadog API key:
    ```bash
-   docker run --rm -d  --name otel-collector -v $(pwd)/config.yaml:/etc/otelcol-contrib/config.yaml -e DD_API_KEY=xxxxxxxx -p 4317:4317 -p 4318:4318 -p 55681:55681 otel/opentelemetry-collector-contrib:0.116.1
+   docker run --rm -d --name otel-collector -v $(pwd)/config.yaml:/etc/otelcol-contrib/config.yaml -e DD_API_KEY=xxxxxxxx -p 4317:4317 -p 4318:4318 -p 55681:55681 otel/opentelemetry-collector-contrib:0.116.1
    ```
    This starts the Otel Collector container, exposing the required ports:
    * 4317: For OTLP/gRPC.
@@ -209,12 +209,12 @@ This shows how we can propagate across service boundaries or threads while maint
 5. **Run the Services**:
     - **Datadog-Instrumented Service (Port 8080)**:
       ```bash
-      java -javaagent:dd-java-agent.jar -Ddd.env=dev -Ddd.service=springdatadog  -Ddd.version=1.2 -Ddd.trace.otel.enabled=true -jar build/libs/spring-otel-context-prop-0.0.1-SNAPSHOT.jar
+      java -javaagent:dd-java-agent.jar -Ddd.env=dev -Ddd.service=springdatadog -Ddd.version=1.2 -Ddd.trace.otel.enabled=true -jar build/libs/spring-otel-context-prop-0.0.1-SNAPSHOT.jar
       ```
 
     - **OpenTelemetry-Instrumented Service (Port 8081)**:
       ```bash
-      java -javaagent:opentelemetry-javaagent.jar  -Dotel.service.name=springotel -Dotel.exporter.otlp.endpoint=http://localhost:4318  -Dotel.traces.exporter=otlp -Dotel.logs.exporter=none          -Dotel.resource.attributes=env=dev          -jar build/libs/spring-otel-context-prop-0.0.1-SNAPSHOT.jar --server.port=8081
+      java -javaagent:opentelemetry-javaagent.jar -Dotel.service.name=springotel -Dotel.exporter.otlp.endpoint=http://localhost:4318 -Dotel.traces.exporter=otlp -Dotel.logs.exporter=none -Dotel.resource.attributes=env=dev          -jar build/libs/spring-otel-context-prop-0.0.1-SNAPSHOT.jar --server.port=8081
       ```
 
 ---
