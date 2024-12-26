@@ -256,7 +256,15 @@ curl localhost:8081/api/inject-extract
 #### **Datadog Traces**:
 - Go to the Datadog dashboard under **APM > Traces > Explorer**.
 
+<p align="left">
+  <img src="img/springdatadog.png" width="850" />
+</p>
+
 #### **OpenTelemetry Traces**:
 - Go to the Datadog dashboard under **APM > Traces > Explorer**.
+
+<p align="left">
+  <img src="img/springotel.png" width="850" />
+</p>
 
 ---
