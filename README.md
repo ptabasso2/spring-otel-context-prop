@@ -222,13 +222,16 @@ This shows how we can propagate across service boundaries or threads while maint
 ### **Docker Compose Setup**
 
 1. **Build and Start Services**:
+
+Replace `xxxxxxxx` with your Datadog API key:
+
    ```bash
-   docker-compose build
-   docker-compose up -d
+    docker-compose build
+    DD_API_KEY=xxxxxxxx docker-compose up -d
    ```
 
 2. **Verify Services**:
-   Use `docker ps` to confirm that all services are running.
+   Use `docker-compose ps` to confirm that all services are running.
 
 ---
 
