@@ -1,0 +1,36 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+  zipkin:
+    endpoint: 0.0.0.0:9411
+
+processors:
+  batch:
+    timeout: 10s
+connectors:
+    datadog/connector:
+exporters:
+  datadog:
+    api:
+      site: datadoghq.com
+      key: ${DD_API_KEY}
+  debug:
+    verbosity: detailed
+
+service:
+  telemetry:
+    logs:
+      level: debug
+  pipelines:
+    metrics:
+      receivers: [datadog/connector, otlp]
+      processors: [batch]
+      exporters: [debug, datadog]
+    traces:
+      receivers: [otlp, zipkin]
+      processors: [batch]
+      exporters: [debug, datadog/connector, datadog]

@@ -1,0 +1,80 @@
+version: '3.5'
+
+services:
+  dd-agent:
+    container_name: dd-agent
+    image: gcr.io/datadoghq/agent:latest-jmx
+    environment:
+      - DD_HOSTNAME=datadog
+      - DD_API_KEY
+      - DD_APM_ENABLED=true
+      - DD_APM_NON_LOCAL_TRAFFIC=true
+      - DD_PROCESS_AGENT_ENABLED=true
+      - DD_DOGSTATSD_NON_LOCAL_TRAFFIC="true"
+      - DD_LOG_LEVEL=debug
+      - DD_LOGS_ENABLED=true
+      - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
+      - DD_CONTAINER_EXCLUDE_LOGS="name:datadog-agent"
+      - SD_JMX_ENABLE=true
+    ports:
+      - "8125:8125"
+      - "8126:8126"
+    volumes:
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - app
+
+  otelcollector:
+    container_name: otelcollector
+    image: otel/opentelemetry-collector-contrib
+    volumes:
+      - ./config.yaml:/etc/otelcol-contrib/config.yaml
+    ports:
+      - 1888:1888 # pprof extension
+      - 8888:8888 # Prometheus metrics exposed by the Collector
+      - 8889:8889 # Prometheus exporter metrics
+      - 13133:13133 # health_check extension
+      - 4317:4317 # OTLP gRPC receiver
+      - 4318:4318 # OTLP http receiver
+      - 9411:9411 # Zipkin receiver
+      - 55679:55679 # zpages extension
+    networks:
+      - app
+
+
+  springdatadog:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: springdatadog
+    environment:
+      - JAVA_TOOL_OPTIONS=-javaagent:/root/dd-java-agent.jar -Ddd.agent.host=dd-agent -Ddd.service=springdatadog -Ddd.env=dev -Ddd.version=1.2 -Ddd.trace.otel.enabled=true -Ddd.trace.sample.rate=1 -Ddd.logs.injection=true -Ddd.profiling.enabled=true -XX:FlightRecorderOptions=stackdepth=256 -Ddd.tags=env:dev
+    hostname: springdatadog
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dd-java-agent.jar:/root/dd-java-agent.jar
+    networks:
+      - app
+
+  springotel:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: springotel
+    environment:
+      - JAVA_TOOL_OPTIONS=-javaagent:/root/opentelemetry-javaagent.jar -Dotel.service.name=springotel -Dotel.exporter.otlp.endpoint=http://otelcollector:4318 -Dotel.traces.exporter=otlp -Dotel.logs.exporter=none -Dotel.resource.attributes=env=dev
+    hostname: springotel
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./opentelemetry-javaagent.jar:/root/opentelemetry-javaagent.jar
+    networks:
+      - app
+
+networks:
+  app:
+    driver: bridge
+    name: app
