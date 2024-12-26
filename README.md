@@ -23,7 +23,6 @@ spring-otel-context-prop/
 │                       └── OtelCtxPropController.java
 │       └── resources/
 │           └── application.properties
-****
 ├── Dockerfile
 ├── build.gradle.kts
 ├── config.yaml
