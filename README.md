@@ -36,17 +36,19 @@ spring-otel-context-prop/
 ```
 
 **Key Components**
-src/main/java/com/example/controller/TraceController.java: Contains the Spring Boot controller with endpoints demonstrating context propagation using the Otel API.
 
-docker-compose.yml: Defines services for the Datadog Agent, Otel Collector, and two Spring Boot applications (springotel and springdatadog).
 
-Dockerfile: Specifies the Docker image build process for the Spring Boot applications.
+`src/main/java/com/example/controller/TraceController.java`: Contains the Spring Boot controller with endpoints showcasing context propagation using the Otel API.
 
-build.gradle.kts: Kotlin-based Gradle build script for the project.
+`docker-compose.yml`: Defines services for the Datadog Agent, Otel Collector, and two Spring Boot applications (`springotel` and `springdatadog`).
 
-config.yaml: Configuration file for the Otel Collector.
+`Dockerfile`: Specifies the Docker image build process for the Spring Boot applications.
 
-dd-java-agent.jar and opentelemetry-javaagent.jar: Java agent JARs for Datadog and Otel, respectively.
+`build.gradle.kts`: Kotlin-based Gradle build script for the project.
+
+`config.yaml`: Configuration file for the Otel Collector.
+
+`dd-java-agent.jar` and `opentelemetry-javaagent.jar`: Java agent JARs for Datadog and Otel, respectively.
 
 ---
 
