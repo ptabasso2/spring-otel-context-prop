@@ -230,7 +230,7 @@ This shows how we can propagate across service boundaries or threads while maint
 
 6. **(Appendix) Downloading the agents**:
    
-   In case you need to download the agents, you would do as follows:
+   In case you need to download the latest (or a specific version) of the agents, you would do as follows:
    
    * **Otel:**
       ```bash
