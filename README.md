@@ -211,13 +211,13 @@ This shows how we can propagate across service boundaries or threads while maint
    * **55681**: For custom protocols.
 
 
-4. **Start the Datadog Agent**:
+5. **Start the Datadog Agent**:
    Replace `xxxxxxxx` with your Datadog API key:
    ```bash
    docker run --rm -d --name dd-agent-dogfood-jmx -v /var/run/docker.sock:/var/run/docker.sock:ro -v /proc/:/host/proc/:ro -v /sys/fs/cgroup/:/host/sys/fs/cgroup:ro -p 8126:8126 -p 8125:8125/udp -e DD_API_KEY=xxxxxxxx -e DD_APM_ENABLED=true -e DD_APM_NON_LOCAL_TRAFFIC=true -e DD_PROCESS_AGENT_ENABLED=true -e DD_DOGSTATSD_NON_LOCAL_TRAFFIC="true" -e DD_LOG_LEVEL=debug -e DD_LOGS_ENABLED=true -e DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true -e DD_CONTAINER_EXCLUDE_LOGS="name:datadog-agent" gcr.io/datadoghq/agent:latest-jmx
    ```
 
-5. **Run the Services**:
+6. **Run the Services**:
     - **Datadog-Instrumented Service (Port 8080)**:
       ```bash
       java -javaagent:dd-java-agent.jar -Ddd.env=dev -Ddd.service=springdatadog -Ddd.version=1.2 -Ddd.trace.otel.enabled=true -jar build/libs/spring-otel-context-prop-0.0.1-SNAPSHOT.jar
@@ -226,6 +226,19 @@ This shows how we can propagate across service boundaries or threads while maint
     - **OpenTelemetry-Instrumented Service (Port 8081)**:
       ```bash
       java -javaagent:opentelemetry-javaagent.jar -Dotel.service.name=springotel -Dotel.exporter.otlp.endpoint=http://localhost:4318 -Dotel.traces.exporter=otlp -Dotel.logs.exporter=none -Dotel.resource.attributes=env=dev          -jar build/libs/spring-otel-context-prop-0.0.1-SNAPSHOT.jar --server.port=8081
+      ```
+
+6. **(Appendix) Downloading the agents**:
+   
+   In case you need to download the agents, you would do as follows:
+   
+   * **Otel:**
+      ```bash
+      wget https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar
+      ```
+   * **Datadog**
+      ```bash
+      wget -O dd-java-agent.jar 'https://dtdg.co/latest-java-tracer'
       ```
 
 ---
