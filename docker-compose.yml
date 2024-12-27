@@ -29,6 +29,8 @@ services:
   otelcollector:
     container_name: otelcollector
     image: otel/opentelemetry-collector-contrib
+    environment:
+      - DD_API_KEY
     volumes:
       - ./config.yaml:/etc/otelcol-contrib/config.yaml
     ports:

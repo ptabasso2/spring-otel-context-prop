@@ -1,7 +1,11 @@
 
 # Comparing OpenTelemetry and Datadog Java Agents used together with the Otel API.
 
-This project compares the use of the **OpenTelemetry API** with two automatic instrumentation agents: the OpenTelemetry Java Agent and the Datadog Java Agent. It includes a Spring Boot application instrumented with OpenTelemetry (via the Otel agent) and Datadog (via the Datadog agent). The project uses **context propagation** to demonstrate parent-child relationships in traces and uses Docker Compose for a containerized setup with both the Otel Collector and Datadog Agent.
+This project compares the use of the **OpenTelemetry API** with two automatic instrumentation agents: the OpenTelemetry Java Agent and the Datadog Java Agent. 
+
+It includes a Spring Boot application instrumented with OpenTelemetry (via the **Otel agent**) and Datadog (via the **Datadog agent**). 
+
+The project uses **context propagation** to demonstrate parent-child relationships in traces and uses `docker-compose` for a containerized setup with both the Otel Collector and Datadog Agent.
 
 ---
 
@@ -10,28 +14,35 @@ This project compares the use of the **OpenTelemetry API** with two automatic in
 The project directory structure is as follows:
 
 ```
-spring-otel-context-prop/
-├── gradle/
-│   └── wrapper/
-├── src/
-│   └── main/
-│       └── java/
-│           └── com/
-│               └── datadoghq/
-│                   └── pej/
-│                       └── OtelCtxPropApplication.java
-│                       └── OtelCtxPropController.java
-│       └── resources/
-│           └── application.properties
-├── Dockerfile
-├── build.gradle.kts
-├── config.yaml
-├── dd-java-agent.jar
-├── docker-compose.yml
-├── gradlew
-├── opentelemetry-javaagent.jar
-├── README.md
-└── settings.gradle.kts
+spring-otel-context-prop
+   ├── Dockerfile
+   ├── README.md
+   ├── build.gradle.kts
+   ├── config.yaml
+   ├── dd-java-agent.jar
+   ├── docker-compose.yml
+   ├── gradle
+   │      └── wrapper
+   │          ├── gradle-wrapper.jar
+   │          └── gradle-wrapper.properties
+   ├── gradlew
+   ├── img
+   │    ├── springdatadog.png
+   │    └── springotel.png
+   ├── opentelemetry-javaagent.jar
+   ├── otentelemetry-javaagent.jar
+   ├── settings.gradle.kts
+   └── src
+       └── main
+           └── java
+                 └── com
+                     └── datadoghq
+                         └── pej
+                             ├── OtelCtxPropApplication.java
+                             └── OtelCtxPropController.java
+           └──resources
+               └── application.properties
+
 ```
 
 **Key Components**
@@ -142,7 +153,7 @@ public class OtelCtxPropController {
 }
 ```
 
-**Explanation of the Controller**
+**Explanation of the Spring Boot Controller**
 
 The `OtelCtxPropController.java` relies on the OpenTelemetry API to propagate context. 
 
@@ -195,9 +206,9 @@ This shows how we can propagate across service boundaries or threads while maint
    docker run --rm -d --name otel-collector -v $(pwd)/config.yaml:/etc/otelcol-contrib/config.yaml -e DD_API_KEY=xxxxxxxx -p 4317:4317 -p 4318:4318 -p 55681:55681 otel/opentelemetry-collector-contrib:0.116.1
    ```
    This starts the Otel Collector container, exposing the required ports:
-   * 4317: For OTLP/gRPC.
-   * 4318: For OTLP/HTTP.
-   * 55681: For custom protocols.
+   * **4317**: For OTLP/gRPC.
+   * **4318**: For OTLP/HTTP.
+   * **55681**: For custom protocols.
 
 
 4. **Start the Datadog Agent**:
@@ -232,6 +243,21 @@ Replace `xxxxxxxx` with your Datadog API key:
 
 2. **Verify Services**:
    Use `docker-compose ps` to confirm that all services are running.
+
+```bash
+[root@pt-instance-2:~/otelctxprop]$ docker-compose ps
+    Name                   Command                       State                                                     Ports                                          
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    Name                   Command                  State                                                     Ports                                               
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+dd-agent        /bin/entrypoint.sh               Up (healthy)   0.0.0.0:8125->8125/tcp,:::8125->8125/tcp, 8125/udp, 0.0.0.0:8126->8126/tcp,:::8126->8126/tcp      
+otelcollector   /otelcol-contrib --config  ...   Up             0.0.0.0:13133->13133/tcp,:::13133->13133/tcp, 0.0.0.0:1888->1888/tcp,:::1888->1888/tcp,           
+                                                                0.0.0.0:4317->4317/tcp,:::4317->4317/tcp, 0.0.0.0:4318->4318/tcp,:::4318->4318/tcp, 55678/tcp,    
+                                                                0.0.0.0:55679->55679/tcp,:::55679->55679/tcp, 0.0.0.0:8888->8888/tcp,:::8888->8888/tcp,           
+                                                                0.0.0.0:8889->8889/tcp,:::8889->8889/tcp, 0.0.0.0:9411->9411/tcp,:::9411->9411/tcp                
+springdatadog   /__cacert_entrypoint.sh ja ...   Up             0.0.0.0:8080->8080/tcp,:::8080->8080/tcp                                                          
+springotel      /__cacert_entrypoint.sh ja ...   Up             0.0.0.0:8081->8080/tcp,:::8081->8080/tcp                                                          
+```
 
 ---
 
