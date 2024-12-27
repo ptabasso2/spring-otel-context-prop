@@ -183,9 +183,9 @@ This shows how we can propagate across service boundaries or threads while maint
 
 1. **Prerequisites**
 
-     * **JDK 17**: Ensure that JDK 17 is installed on your machine.
+     * **JDK 17+**: Ensure that JDK 17 or above is installed on your machine.
      * **Gradle 8.11.1**: Verify that Gradle 8.11.1 is installed.
-     * **Docker**: Install Docker to build and run containerized services.
+     * **Docker**: Install Docker and Docker compose to build and run containerized services.
 
 
 2. **Clone the Repository**:
@@ -239,6 +239,12 @@ Replace `xxxxxxxx` with your Datadog API key:
    ```bash
     docker-compose build
     DD_API_KEY=xxxxxxxx docker-compose up -d
+   ```
+
+Or in one pass
+
+   ```bash
+    DD_API_KEY=xxxxxxxx docker-compose up --build -d
    ```
 
 2. **Verify Services**:

@@ -1,5 +1,5 @@
 # Stage 1: Build the Spring Boot application
-FROM gradle:8.11.1-jdk17 as build
+FROM gradle:8.11.1-jdk17 AS build
 
 # Set the working directory
 WORKDIR /app
@@ -11,7 +11,7 @@ COPY . .
 RUN gradle build -x test
 
 # Stage 2: Run the Spring Boot application
-FROM eclipse-temurin:17-jdk-alpine as runtime
+FROM eclipse-temurin:17-jdk-alpine AS runtime
 
 # Set the working directory
 WORKDIR /app
